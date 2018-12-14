@@ -3,7 +3,13 @@ let AmazonDB = require('./amazonDB.js');
 let inquirer = require('Inquirer');
 
 let amazonDB = new AmazonDB();
-main();
+
+try {
+  main();
+} catch(ex) {
+  console.log(ex);
+}
+
 
 async function main() {
 

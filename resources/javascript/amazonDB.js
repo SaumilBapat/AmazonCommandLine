@@ -36,22 +36,11 @@ class AmazonDB {
     }
   }
 
-  addToInventory(userOptions) {
-
-    var addToInventoryPromise = new Promise((resolve, reject) => {
-      var fetchInventoryPromise = db.getItem(this.connection, userOptions.itemId);
-      fetchInventoryPromise.then((rows) => {
-        let updatedQuantity = parseInt(userOptions.quantity) + parseInt(rows[0].stock_quantity);
-        var updateInventoryPromise = db.updateItem(this.connection, userOptions.itemId, updatedQuantity);
-        updateInventoryPromise.then((result) => {
-          console.log(`Updated stock quantity to ${updatedQuantity} for item id ${userOptions.itemId}`);
-          resolve();
-        }).catch((ex) => {
-          reject(ex);
-        });
-      });
-    });
-    return addToInventoryPromise;
+  async addToInventory(userOptions) {
+    const existingItem = await db.getItem(this.connection, userOptions.itemId);
+    const updatedQuantity = parseInt(userOptions.quantity) + parseInt(rows[0].stock_quantity);
+    await db.updateItem(this.connection, userOptions.itemId, updatedQuantity);
+    console.log(`Updated stock quantity to ${updatedQuantity} for item id ${userOptions.itemId}`);
   }
 
   async addNewItem(newProduct) {
