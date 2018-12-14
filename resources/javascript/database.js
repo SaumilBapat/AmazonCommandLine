@@ -1,31 +1,75 @@
-console.log('Initialized class');
 const mysql = require('mysql');
-class AmazonDB{
-  constructor() {
-    console.log('Running the DB!');
-    var connection = mysql.createConnection({
-      host: "localhost",
-      port: 3306,
-      user: "root",
-      password: "hoginogi",
-      database: "bamazon"
-    });
-    connection.connect(function(err) {
-      if (err) throw err;
-      console.log("connected as id " + connection.threadId);
-      connection.query("select * from products;", function(error, result) {
-        if (error) throw error;
-        result.forEach((item) => {
-          console.log(`Item Id: ${item.item_id}`);
-          console.log(`Product Name: ${item.product_name}`);
-          console.log(`Department Name: ${item.department_name}`);
-          console.log(`Price: ${item.price}`);
-          console.log(`Stock Quantity: ${item.stock_quantity}`);
-          console.log(`---------------\r\n`);
-        });
-      })
-      connection.end();
-    });
-  }
+
+function initialize(dbConfig) {
+  return mysql.createConnection(dbConfig);
 }
-module.exports = AmazonDB;
+
+function getAllItems(dbConnection) {
+  return new Promise((resolve, reject) => {
+      dbConnection.query('SELECT * FROM products', function(err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+}
+
+function getLowQuantityItems(dbConnection) {
+  console.log(`getLowQuantityItems`);
+  return new Promise((resolve, reject) => {
+      dbConnection.query("SELECT * FROM bamazon.products where stock_quantity <= 5;", function(err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+}
+
+function getItem(dbConnection, itemId) {
+  return new Promise((resolve, reject) => {
+      dbConnection.query(`SELECT * FROM products WHERE ?`,  [{item_id: itemId}], function(err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+}
+
+function addNewItem(dbConnection, userOptions) {
+  return new Promise((resolve, reject) => {
+      var newItem = [
+        {item_id: userOptions.itemId},
+        {product_name: userOptions.productName},
+        {department_name: userOptions.departmentName},
+        {price: parseFloat(userOptions.price).toFixed(2)},
+        {stock_quantity: parseInt(userOptions.stockQuantity)}
+      ];
+      newItem = [
+        [userOptions.itemId, userOptions.productName, userOptions.departmentName, userOptions.price, userOptions.stockQuantity]
+      ];
+      dbConnection.query('INSERT INTO products (item_id, product_name, department_name, price, stock_quantity) VALUES ?', [newItem], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+}
+
+function updateItem(dbConnection, itemId, quantity) {
+  return new Promise((resolve, reject) => {
+      dbConnection.query('UPDATE products SET ? WHERE ?', [{ stock_quantity: quantity }, { item_id: itemId }], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+}
+
+function terminate(dbConnection) {
+  return dbConnection.end();
+}
+
+module.exports = {
+  initialize,
+  getAllItems,
+  getLowQuantityItems,
+  getItem,
+  addNewItem,
+  updateItem,
+  terminate,
+};

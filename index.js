@@ -1,3 +1,1 @@
-let AmazonDB = require('./resources/javascript/database.js');
-
-let db = new AmazonDB();
+let bamazonCustomer = require('./resources/javascript/bamazonCustomer.js');
