@@ -10,68 +10,34 @@ class AmazonDB {
     });
   }
 
-  displayAllItems() {
-    var displayPromise = new Promise((resolve, reject) => {
-      var dbPromise = db.getAllItems(this.connection);
-      dbPromise.then((rows) => {
-        this.logRows(rows);
-        resolve('\r\n');
-      }).catch((err) => {
-        reject(err);
-      })
-    });
-    return displayPromise;
+  async displayAllItems() {
+    const rows =  await db.getAllItems(this.connection);
+    return this.logRows(rows);
   }
 
-  displayLowQuantityItems() {
-    var displayPromise = new Promise((resolve, reject) => {
-      var dbPromise = db.getLowQuantityItems(this.connection);
-      dbPromise.then((rows) => {
-        this.logRows(rows);
-        resolve('\r\n');
-      }).catch((err) => {
-        reject(err);
-      })
-    });
-    return displayPromise;
+  async displayLowQuantityItems() {
+    const rows = await db.getLowQuantityItems(this.connection);
+    return this.logRows(rows);
   }
 
-  buyItems(itemId, quantity) {
+  async buyItems(itemId, quantity) {
     console.log(`Attempting to buy quantity: ${quantity} of item id: ${itemId}`);
-    var buyPromise = new Promise((resolve, reject) => {
-      var dbGetPromise = db.getItem(this.connection, itemId);
-      dbGetPromise.then((row) => {
-        //this.logRows(row);
-        if(row.length === 0) {
-          resolve('Invalid itemId');
-        } else if (parseInt(row[0].stock_quantity) >= parseInt(quantity)){
-          let updatedQuantity = parseInt(row[0].stock_quantity) - parseInt(quantity);
-          let price = parseFloat(quantity) * parseFloat(row[0].price);
-          var dbUpdatePromise = db.updateItem(this.connection, itemId, updatedQuantity);
-          dbUpdatePromise.then((updateResults) => {
-            var dbGetUpdatedPromise = db.getItem(this.connection, itemId);
-            dbGetUpdatedPromise.then((updatedRow) => {
-              console.log('----Updated Stock Quantity----');
-              this.logRows(updatedRow);
-              resolve(`Successfully bought items for $${price.toFixed(2)}`);
-            }).catch((err) => {
-              reject(err);
-            });
-          }).catch((err) => {
-            reject(err);
-          })
-        } else {
-          resolve('Insufficient quantity');
-        }
-      }).catch((err) => {
-        console.log(err);
-        reject(err);
-      })
-    });
-    return buyPromise;
+    const itemRow = await db.getItem(this.connection, itemId);
+    if(itemRow.length === 0) {
+      return console.log('Invalid Item Id');
+    } else if(parseInt(itemRow[0].stock_quantity) < parseInt(quantity)) {
+      return console.log('Insufficient stock quantity');
+    } else {
+      const updatedQuantity = parseInt(itemRow[0].stock_quantity) - parseInt(quantity);
+      await db.updateItem(this.connection, itemId, updatedQuantity);
+      let updatedItem = await db.getItem(this.connection, itemId);
+      console.log('----Updated Stock Quantity----');
+      return this.logRows(updatedItem);
+    }
   }
 
   addToInventory(userOptions) {
+
     var addToInventoryPromise = new Promise((resolve, reject) => {
       var fetchInventoryPromise = db.getItem(this.connection, userOptions.itemId);
       fetchInventoryPromise.then((rows) => {
@@ -88,21 +54,13 @@ class AmazonDB {
     return addToInventoryPromise;
   }
 
-  addNewItem(userOptions) {
-    var displayPromise = new Promise((resolve, reject) => {
-      var dbPromise = db.addNewItem(this.connection, userOptions);
-      dbPromise.then((rows) => {
-        console.log(`Successfully added products`);
-        resolve('\r\n');
-      }).catch((err) => {
-        reject(err);
-      })
-    });
-    return displayPromise;
+  async addNewItem(newProduct) {
+    const rows = await db.addNewItem(this.connection, newProduct);
+    console.log(`Successfully added products`);
   }
 
-  terminate() {
-    db.terminate(this.connection);
+  async terminate() {
+    await db.terminate(this.connection);
   }
 
   logRows(rows) {

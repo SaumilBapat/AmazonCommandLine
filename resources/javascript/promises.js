@@ -1,18 +1,9 @@
-let promise1 = new Promise(function (resolve, reject) {
-  setTimeout(function(done) {
-    resolve("Finished 2000 timeout");
-  }, 2000);
-});
+let inquirer = require('inquirer');
+userPrompt();
 
-let promise2 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve('Finished 1000 timeout');
-  }, 1000);
-});
+console.log('done prompt');
 
-promise1.then((response) => {
-  console.log(response);
-  promise2.then((response2) => {
-    console.log(response2);
-  })
-});
+async function userPrompt() {
+  const userInput = await inquirer.prompt([{type: 'input', name:'message', message:'Enter a word'}]);
+  console.log(userInput.message);
+}

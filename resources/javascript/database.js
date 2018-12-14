@@ -4,7 +4,7 @@ function initialize(dbConfig) {
   return mysql.createConnection(dbConfig);
 }
 
-function getAllItems(dbConnection) {
+async function getAllItems(dbConnection) {
   return new Promise((resolve, reject) => {
       dbConnection.query('SELECT * FROM products', function(err, result) {
         if (err) reject(err);
