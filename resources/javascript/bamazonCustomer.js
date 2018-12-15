@@ -25,6 +25,5 @@ async function main() {
   ];
   const userInput = await inquirer.prompt(userOptions);
   const result =  await amazonDB.buyItems(userInput.itemId, userInput.quantity);
-  console.log(result);
   await amazonDB.terminate();
 }
