@@ -1,4 +1,6 @@
 const db = require('./database.js');
+var Table = require('cli-table');
+
 class AmazonDB {
   constructor() {
     // Initialize the DB
@@ -87,29 +89,39 @@ class AmazonDB {
 
   // Logs the product details to the console
   logProductRows(rows) {
+    var table = new Table({
+      head: ['Item Id', 'Product Name', 'Department Name', 'Price'], colWidths: [20, 20, 20, 20]
+    });
     rows.forEach((item) => {
-      console.log(`Item Id: ${item.item_id}`);
-      console.log(`Product Name: ${item.product_name}`);
-      console.log(`Department Name: ${item.department_name}`);
-      console.log(`Price: ${item.price}`);
+      table.push([item.item_id, item.product_name, item.department_name, item.price]);
+      // console.log(`Item Id: ${item.item_id}`);
+      // console.log(`Product Name: ${item.product_name}`);
+      // console.log(`Department Name: ${item.department_name}`);
+      // console.log(`Price: ${item.price}`);
       // console.log(`Stock Quantity: ${item.stock_quantity}`);
       // console.log(`Product Sales: ${item.product_sales}`);
-      console.log(`---------------\r\n`);
+      // console.log(`---------------\r\n`);
     });
+    console.log(table.toString());
   }
 
   // Logs the department details to the console
   logDepartmentRows(rows) {
+    var table = new Table({
+      head: ['Department Id', 'Department Name', 'Overhead Costs', 'Product Sales', 'Total Profits'], colWidths: [20, 20, 20, 20, 20]
+    });
     rows.forEach((item) => {
-      console.log(`department_id: ${item.department_id}`);
-      console.log(`department_name: ${item.department_name}`);
-      console.log(`over_head_costs: ${item.over_head_costs}`);
-      console.log(`product_sales: ${item.total_product_sales}`);
-      console.log(`total_profit: ${item.total_product_sales - item.over_head_costs}`);
+      table.push([item.department_id, item.department_name, item.over_head_costs, item.total_product_sales, item.total_product_sales - item.over_head_costs]);
+      // console.log(`department_id: ${item.department_id}`);
+      // console.log(`department_name: ${item.department_name}`);
+      // console.log(`over_head_costs: ${item.over_head_costs}`);
+      // console.log(`product_sales: ${item.total_product_sales}`);
+      // console.log(`total_profit: ${item.total_product_sales - item.over_head_costs}`);
       // console.log(`Stock Quantity: ${item.stock_quantity}`);
       // console.log(`Product Sales: ${item.product_sales}`);
-      console.log(`---------------\r\n`);
+      // console.log(`---------------\r\n`);
     });
+    console.log(table.toString());
   }
 }
 module.exports = AmazonDB;
