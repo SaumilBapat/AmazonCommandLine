@@ -79,8 +79,8 @@ VALUES ("1", "Supplies", 10000.00);
 
 -- Creates new rows containing data in all named columns --
 INSERT INTO departments (department_id, department_name, over_head_costs)
-VALUES ("1", "Furniture", 10000.00);
+VALUES ("2", "Electronics", 10000.00);
 
 -- Creates new rows containing data in all named columns --
 INSERT INTO departments (department_id, department_name, over_head_costs)
-VALUES ("1", "Furniture", 10000.00);
+VALUES ("3", "Furniture", 10000.00);

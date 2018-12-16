@@ -15,7 +15,9 @@ async function getAllItems(dbConnection) {
 
 async function getAllDepartments(dbConnection) {
   return new Promise((resolve, reject) => {
-      dbConnection.query('SELECT * FROM departments', function(err, result) {
+      dbConnection.query(`SELECT bamazon.departments.department_name, bamazon.departments.department_id, SUM(bamazon.products.product_sales) AS total_product_sales, MAX(bamazon.departments.over_head_costs) AS over_head_costs
+FROM bamazon.departments
+INNER JOIN bamazon.products ON bamazon.departments.department_name=bamazon.products.department_name GROUP BY bamazon.departments.department_name, bamazon.departments.department_id ORDER BY bamazon.departments.department_id;`, function(err, result) {
         if (err) reject(err);
         resolve(result);
       });

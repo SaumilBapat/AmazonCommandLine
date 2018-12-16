@@ -81,8 +81,8 @@ class AmazonDB {
       console.log(`department_id: ${item.department_id}`);
       console.log(`department_name: ${item.department_name}`);
       console.log(`over_head_costs: ${item.over_head_costs}`);
-      console.log(`product_sales: ${item.product_sales}`);
-      console.log(`total_profit: ${item.total_profit}`);
+      console.log(`product_sales: ${item.total_product_sales}`);
+      console.log(`total_profit: ${item.total_product_sales - item.over_head_costs}`);
       // console.log(`Stock Quantity: ${item.stock_quantity}`);
       // console.log(`Product Sales: ${item.product_sales}`);
       console.log(`---------------\r\n`);
