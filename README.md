@@ -5,7 +5,7 @@
 - Run npm install & node
 
 - Run node index.js in the command line to start
-![Screencap](https://github.com/SaumilBapat/AmazonCommandLine/blob/master/index.png)
+![Screencap](https://github.com/SaumilBapat/AmazonCommandLine/blob/master/resources/images/index.png)
 
 *Customer Script*
 - Customers can buy items
