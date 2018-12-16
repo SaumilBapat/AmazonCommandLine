@@ -1,18 +1,19 @@
-//Challenge #1: Customer View
-let AmazonDB = require('./amazonDB.js');
-let inquirer = require('Inquirer');
+//Challenge #2: Manager View
 
+//Require the needed modules
+let inquirer = require('Inquirer');
+let AmazonDB = require('./amazonDB.js');
 let amazonDB = new AmazonDB();
 
+//The primary logic is enclosed in a main async function
 try {
   main();
 } catch(ex) {
   console.log(ex);
 }
 
-
+//Prompt manager with options and switch to the right actions
 async function main() {
-
   const managerOptions = [
     "View Products for Sale",
     "View Low Inventory",
@@ -36,10 +37,12 @@ async function main() {
       await amazonDB.terminate();
       break;
 
+    // The logic is enclosed in a inner function
     case "Add to Inventory":
       addToInventory();
       break;
 
+   // The logic is enclosed in a inner function
     case "Add New Product":
       console.log("Selected Add New Product");
       addNewProduct();
@@ -47,6 +50,7 @@ async function main() {
   }
 }
 
+// Prompt the user for the new product details
 async function addNewProduct() {
     const newProductOptions = [
       {type: 'input', name: 'itemId', message: "Enter the item id"},
@@ -60,6 +64,7 @@ async function addNewProduct() {
     await amazonDB.terminate();
 }
 
+//Prompt the user for the inventory details
 async function addToInventory() {
   const addOptions = [
     {type: 'input', name: 'itemId', message: 'Enter the item id'},

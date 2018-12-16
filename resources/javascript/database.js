@@ -1,9 +1,10 @@
+// This file contains the base level DB calls
 const mysql = require('mysql');
-
+// Initialize the db
 function initialize(dbConfig) {
   return mysql.createConnection(dbConfig);
 }
-
+// Query all the products from the db and return a promise with the results
 async function getAllItems(dbConnection) {
   return new Promise((resolve, reject) => {
       dbConnection.query('SELECT * FROM products', function(err, result) {
@@ -13,17 +14,23 @@ async function getAllItems(dbConnection) {
   });
 }
 
+// Query all the departmetns from the db, aggregate the total product sales, and return a promise with the results
 async function getAllDepartments(dbConnection) {
   return new Promise((resolve, reject) => {
-      dbConnection.query(`SELECT bamazon.departments.department_name, bamazon.departments.department_id, SUM(bamazon.products.product_sales) AS total_product_sales, MAX(bamazon.departments.over_head_costs) AS over_head_costs
+      dbConnection.query(`
+SELECT bamazon.departments.department_name, bamazon.departments.department_id,
+SUM(bamazon.products.product_sales) AS total_product_sales, MAX(bamazon.departments.over_head_costs) AS over_head_costs
 FROM bamazon.departments
-INNER JOIN bamazon.products ON bamazon.departments.department_name=bamazon.products.department_name GROUP BY bamazon.departments.department_name, bamazon.departments.department_id ORDER BY bamazon.departments.department_id;`, function(err, result) {
+INNER JOIN bamazon.products ON bamazon.departments.department_name=bamazon.products.department_name
+GROUP BY bamazon.departments.department_name, bamazon.departments.department_id
+ORDER BY bamazon.departments.department_id;`, function(err, result) {
         if (err) reject(err);
         resolve(result);
       });
   });
 }
 
+// Query and return all low quantity products
 function getLowQuantityItems(dbConnection) {
   console.log(`getLowQuantityItems`);
   return new Promise((resolve, reject) => {
@@ -34,6 +41,7 @@ function getLowQuantityItems(dbConnection) {
   });
 }
 
+// Fetch a product from the DB
 function getItem(dbConnection, itemId) {
   return new Promise((resolve, reject) => {
       dbConnection.query(`SELECT * FROM products WHERE ?`,  [{item_id: itemId}], function(err, result) {
@@ -43,6 +51,7 @@ function getItem(dbConnection, itemId) {
   });
 }
 
+// Add a new product to the db
 function addNewItem(dbConnection, userOptions) {
   return new Promise((resolve, reject) => {
       var newItem = {
@@ -59,6 +68,7 @@ function addNewItem(dbConnection, userOptions) {
   });
 }
 
+// Add a department to the db
 function addNewDepartment(dbConnection, userOptions) {
   return new Promise((resolve, reject) => {
       const newDepartment = {
@@ -73,6 +83,7 @@ function addNewDepartment(dbConnection, userOptions) {
   });
 }
 
+// Update a product in the db
 function updateItem(dbConnection, item, itemId) {
   return new Promise((resolve, reject) => {
       dbConnection.query('UPDATE products SET ? WHERE ?', [item, { item_id: itemId }], (err, result) => {
@@ -82,10 +93,12 @@ function updateItem(dbConnection, item, itemId) {
   });
 }
 
+// Terminate the db connection
 function terminate(dbConnection) {
   return dbConnection.end();
 }
 
+// Export all the methods in the file
 module.exports = {
   initialize,
   getAllItems,

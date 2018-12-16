@@ -1,14 +1,18 @@
 //Challenge #1: Customer View
-let AmazonDB = require('./amazonDB.js');
+
+//Require the needed modules
 let inquirer = require('Inquirer');
+let AmazonDB = require('./amazonDB.js');
 let amazonDB = new AmazonDB();
 
+//The primary logic is enclosed in a main async function
 try {
   main();
 } catch (ex) {
   console.log(ex);
 }
 
+//Prompt customer and make db calls to buy items
 async function main() {
   await amazonDB.displayAllItems();
   var userOptions = [
