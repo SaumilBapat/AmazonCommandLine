@@ -44,10 +44,13 @@ class AmazonDB {
 
   async addToInventory(userOptions) {
     const existingItem = await db.getItem(this.connection, userOptions.itemId);
-    const updatedQuantity = parseInt(userOptions.quantity) + parseInt(rows[0].stock_quantity);
+    if(existingItem.length === 0) {
+      return console.log(`Invalid item id`);
+    }
+    const updatedQuantity = parseInt(userOptions.quantity) + parseInt(existingItem[0].stock_quantity);
     var item = {stock_quantity: updatedQuantity };
     await db.updateItem(this.connection, item, userOptions.itemId);
-    console.log(`Updated stock quantity to ${updatedQuantity} for item id ${userOptions.itemId}`);
+    return console.log(`Updated stock quantity to ${updatedQuantity} for item id ${userOptions.itemId}`);
   }
 
   async addNewItem(newProduct) {
